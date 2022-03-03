@@ -10,6 +10,10 @@ library(here)
 ```
 
 ```{r}
+source('fin_processing_3d.R')
+```
+
+```{r}
 filename <- here('Processed Data/20211013_ms03_trial06_DLC_3D.csv')
 ```
 
@@ -113,7 +117,7 @@ tri.ind
 data_long %>%
   arrange(frame, bodypart) %>%
   filter(bodypart != 'eye') %>%
-  filter(frame >= 50 & frame < 60) %>%
+  filter(frame >= 60 & frame < 80) %>%
   plot_ly(x = ~fwd, y = ~left, z = ~up,
           i = tri.ind$i, j = tri.ind$j, k = tri.ind$k, frame = ~frame,
           intensity = tri.ind$label, intensitymode='cell',
@@ -121,13 +125,6 @@ data_long %>%
   add_markers(color = ~bodypart)
 ```
 
-```{r}
-data_long %>%
-  group_by(frame) %>%
-  summarize(dorsal_lobe = left[1] - left[6],
-         ventral_lobe = left[5] - left[8]) %>%
-  ungroup()
-```
 
 ```{r}
 data_long %>%
