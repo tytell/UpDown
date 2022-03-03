@@ -2,4 +2,8 @@
 videos
 desktop.ini
 *.pickle
+Processed Data
+*.html
+.DS_Store
+.Rproj.user
 Calibration Images
