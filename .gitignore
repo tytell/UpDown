@@ -2,3 +2,6 @@
 videos
 desktop.ini
 *.pickle
+Processed Data
+*.html
+.DS_Store
