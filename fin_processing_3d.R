@@ -75,8 +75,13 @@ smooth_and_interp <- function(df, t, x, y, z,
 
 find_jump <- function(df, t, x, y, z,
                       bigjump = 0.98,
-                      maxjumpdur = 10)
+                      maxjumpdur = 10,
+                      key = NA)
 {
+  if (!is.na(key)) {
+    print(str(key))
+  }
+  
   df <- df %>%
     mutate(dx = ({{x}} - lag({{x}})) / ({{t}} - lag({{t}})),
            dy = ({{y}} - lag({{y}})) / ({{t}} - lag({{t}})),
@@ -95,24 +100,30 @@ find_jump <- function(df, t, x, y, z,
   
   matchjumps$jumpdir <- 0
   
-  matchedprev <- FALSE
-  for (i in seq(2,nrow(matchjumps))) {
-    if (!matchedprev & matchjumps$isjumpback[i] & (matchjumps$jumpdur[i] < maxjumpdur)) {
-      matchjumps$jumpdir[i-1] <- 1
-      matchjumps$jumpdir[i] <- -1
-      matchedprev <- TRUE
+  if (nrow(matchjumps) < 2) {
+    df %>%
+      mutate(jumpdir = 0,
+             isjump = FALSE)
+  } else {
+    matchedprev <- FALSE
+    for (i in seq(2,nrow(matchjumps))) {
+      if (!matchedprev & matchjumps$isjumpback[i] & (matchjumps$jumpdur[i] < maxjumpdur)) {
+        matchjumps$jumpdir[i-1] <- 1
+        matchjumps$jumpdir[i] <- -1
+        matchedprev <- TRUE
+      }
+      else {
+        matchedprev <- FALSE
+      }
     }
-    else {
-      matchedprev <- FALSE
-    }
-  }
     
-  matchjumps <-
-    matchjumps %>%
-    select({{t}}, jumpdir, isjumpback)
-           
-  df %>%
-    left_join(matchjumps, by = as_label(enquo(t))) %>%
-    mutate(jumpdir = replace_na(jumpdir, 0),
-           isjump = cumsum(jumpdir))
+    matchjumps <-
+      matchjumps %>%
+      select({{t}}, jumpdir, isjumpback)
+    
+    df %>%
+      left_join(matchjumps, by = as_label(enquo(t))) %>%
+      mutate(jumpdir = replace_na(jumpdir, 0),
+             isjump = cumsum(jumpdir))
+  }
 }

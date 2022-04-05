@@ -16,7 +16,7 @@ source('fin_processing_3d.R')
 ```
 
 ```{r}
-filename <- here('20211013_ms03_trial10_DLC_3D.csv')
+filename <- here('Processed Data/20211013_ms03_trial10_DLC_3D.csv')
 ```
 
 ```{r}
